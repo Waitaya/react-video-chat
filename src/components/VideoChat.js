@@ -95,7 +95,7 @@ function VideoChat() {
         stream.getTracks().forEach((track) => track.stop());
       }
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleUserLeft = (userId) => {
@@ -214,15 +214,30 @@ function VideoChat() {
 
   return (
     <div className="w-screen h-screen relative bg-gray-300">
-      {stream && (
+      {callAccepted ? (
         <video
           playsInline
-          muted={!isAudio}
-          ref={userVideo}
+          ref={partnerVideo}
           autoPlay
           className="w-full h-full"
         />
+      ) : (
+        <div className="grid grid-cols-1 divide-y">
+          {users.map((key) => {
+            if (String(key) === String(yourID)) return null;
+            return (
+              <div
+                key={key}
+                className="text-center cursor-pointer p-4 bg-blue-500 hover:bg-blue-700 font-bold text-white"
+                onClick={() => callPeer(key)}
+              >
+                Call {key}
+              </div>
+            );
+          })}
+        </div>
       )}
+
       {receivingCall && (
         <Alert
           message={`${caller} is calling you`}
@@ -232,29 +247,16 @@ function VideoChat() {
           }}
         />
       )}
+
       <div className="absolute top-11 right-12 bg-yellow-50 w-full h-full max-w-80 max-h-80 border border-white shadow-md">
-        {callAccepted ? (
+        {stream && (
           <video
             playsInline
-            ref={partnerVideo}
+            muted={!isAudio}
+            ref={userVideo}
             autoPlay
             className="w-full h-full"
           />
-        ) : (
-          <div className="grid grid-cols-1 divide-y">
-            {users.map((key) => {
-              if (String(key) === String(yourID)) return null;
-              return (
-                <div
-                  key={key}
-                  className="text-center cursor-pointer p-4"
-                  onClick={() => callPeer(key)}
-                >
-                  Call {key}
-                </div>
-              );
-            })}
-          </div>
         )}
       </div>
 
